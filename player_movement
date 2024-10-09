@@ -1,0 +1,32 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerMovement : MonoBehaviour
+{
+    public float moveSpeed = 5f;  // Швидкість руху гравця
+    private Rigidbody2D rb;
+    private Vector2 movement;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();  // Отримуємо компонент Rigidbody2D
+    }
+
+    void Update()
+    {
+        // Отримуємо введення з клавіш для руху по горизонталі (A/D або стрілки вліво/вправо)
+        float moveX = Input.GetAxisRaw("Horizontal");
+        // Отримуємо введення з клавіш для руху по вертикалі (W/S або стрілки вгору/вниз)
+        float moveY = Input.GetAxisRaw("Vertical");
+
+        // Створюємо вектор для руху на основі введення
+        movement = new Vector2(moveX, moveY).normalized;
+    }
+
+    void FixedUpdate()
+    {
+        // Рухаємо гравця
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+    }
+}
