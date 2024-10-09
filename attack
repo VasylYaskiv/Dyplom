@@ -5,18 +5,22 @@ public class PlayerAttack : MonoBehaviour
     // Змінні для шкоди та кулдауну атак
     public float lightAttackDamage = 5f;
     public float heavyAttackDamage = 10f;
-    
+
     public float lightAttackCooldown = 2f;  // Час кулдауну після 4 легких атак
     public float heavyAttackCooldown = 2f;  // Час кулдауну після 3 важких атак
-    
+
     public int maxLightCombo = 4;   // Кількість легких атак підряд
     public int maxHeavyCombo = 3;   // Кількість важких атак підряд
 
     private float lastLightAttackTime;   // Час останньої легкої атаки
     private float lastHeavyAttackTime;   // Час останньої важкої атаки
-    
+
     private int currentLightCombo = 0;   // Лічильник виконаних легких атак
     private int currentHeavyCombo = 0;   // Лічильник виконаних важких атак
+
+    // Радіус атаки
+    public float attackRange = 1f;
+    public LayerMask attackableLayer;  // Шар ворогів і бочок, які можна атакувати
 
     void Update()
     {
@@ -71,14 +75,38 @@ public class PlayerAttack : MonoBehaviour
     void LightAttack()
     {
         Debug.Log("Light attack performed! Damage: " + lightAttackDamage);
-        // Тут можна додати анімацію або інші дії, пов'язані з атакою
+        DealDamage(lightAttackDamage);
     }
 
     // Метод для виконання важкої атаки
     void HeavyAttack()
     {
         Debug.Log("Heavy attack performed! Damage: " + heavyAttackDamage);
-        // Тут можна додати анімацію або інші дії, пов'язані з атакою
+        DealDamage(heavyAttackDamage);
+    }
+
+    // Метод для нанесення шкоди об'єктам
+    void DealDamage(float damage)
+    {
+        // Шукаємо всі об'єкти в радіусі атаки
+        Collider2D[] hitObjects = Physics2D.OverlapCircleAll(transform.position, attackRange, attackableLayer);
+
+        // Перебираємо всі об'єкти та наносимо їм шкоду
+        foreach (Collider2D hitObject in hitObjects)
+        {
+            // Перевіряємо чи об'єкт має компонент Health
+            Health health = hitObject.GetComponent<Health>();
+            if (health != null)
+            {
+                health.TakeDamage(damage);
+            }
+        }
+    }
+
+    // Малюємо радіус атаки для зручності налаштувань
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }
-
