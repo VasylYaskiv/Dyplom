@@ -1,0 +1,51 @@
+using UnityEngine;
+
+public class PlayerDodge : MonoBehaviour
+{
+    public float dodgeDistance = 3f;  // Відстань перекату (в 3 рази більша за стандартний рух)
+    public float dodgeCooldown = 1f;  // Час відкату перекату
+
+    private float lastDodgeTime;      // Час останнього перекату
+    private bool isDodging = false;   // Перевірка, чи виконується перекат
+    private Vector2 dodgeDirection;   // Напрямок перекату
+
+    // Update викликається кожен кадр
+    void Update()
+    {
+        // Перевірка, чи натиснута клавіша для перекату (Shift)
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            // Перевіряємо, чи можна виконати перекат (минув час кулдауну)
+            if (Time.time - lastDodgeTime >= dodgeCooldown)
+            {
+                // Визначаємо напрямок перекату на основі вводу гравця
+                dodgeDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+
+                // Якщо напрямок є (гравець натиснув клавіші напрямку)
+                if (dodgeDirection != Vector2.zero)
+                {
+                    StartDodge();
+                }
+            }
+            else
+            {
+                Debug.Log("Dodge is on cooldown.");
+            }
+        }
+    }
+
+    // Метод для початку перекату
+    void StartDodge()
+    {
+        // Виводимо повідомлення про успішний перекат
+        Debug.Log("Dodge performed!");
+
+        // Виконуємо перекат (переміщуємо гравця на задану відстань)
+        transform.position += (Vector3)dodgeDirection * dodgeDistance;
+
+        // Оновлюємо час останнього перекату
+        lastDodgeTime = Time.time;
+
+        // Тут можна додати анімацію для перекату
+    }
+}
