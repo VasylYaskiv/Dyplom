@@ -1,0 +1,104 @@
+using UnityEngine;
+
+public class Player_Attack : MonoBehaviour
+{
+    // Змінні для шкоди та кулдауну атак
+    public float lightAttackDamage = 5f;
+    public float heavyAttackDamage = 10f;
+
+    public float lightAttackCooldown = 2f;  // Час кулдауну після 4 легких атак
+    public float heavyAttackCooldown = 2f;  // Час кулдауну після 3 важких атак
+
+    public int maxLightCombo = 4;   // Кількість легких атак підряд
+    public int maxHeavyCombo = 3;   // Кількість важких атак підряд
+
+    private float lastLightAttackTime;   // Час останньої легкої атаки
+    private float lastHeavyAttackTime;   // Час останньої важкої атаки
+
+    private int currentLightCombo = 0;   // Лічильник виконаних легких атак
+    private int currentHeavyCombo = 0;   // Лічильник виконаних важких атак
+
+    public float lightAttackRadius = 1f; // Радіус легкої атаки
+    public float heavyAttackRadius = 2f; // Радіус важкої атаки
+
+    void Update()
+    {
+        // Легка атака (ЛКМ)
+        if (Input.GetMouseButtonDown(0))  // ЛКМ - код 0
+        {
+            if (Time.time - lastLightAttackTime >= lightAttackCooldown && currentLightCombo < maxLightCombo)
+            {
+                LightAttack();
+                lastLightAttackTime = Time.time;
+                currentLightCombo++;
+            }
+            else if (currentLightCombo >= maxLightCombo)
+            {
+                // Якщо досягнуто максимальну кількість атак, ставимо кулдаун
+                if (Time.time - lastLightAttackTime >= lightAttackCooldown)
+                {
+                    currentLightCombo = 0;  // Скидаємо лічильник після кулдауну
+                }
+                else
+                {
+                    Debug.Log("Light attack is on cooldown.");
+                }
+            }
+        }
+
+        // Важка атака (ПКМ)
+        if (Input.GetMouseButtonDown(1))  // ПКМ - код 1
+        {
+            if (Time.time - lastHeavyAttackTime >= heavyAttackCooldown && currentHeavyCombo < maxHeavyCombo)
+            {
+                HeavyAttack();
+                lastHeavyAttackTime = Time.time;
+                currentHeavyCombo++;
+            }
+            else if (currentHeavyCombo >= maxHeavyCombo)
+            {
+                // Якщо досягнуто максимальну кількість атак, ставимо кулдаун
+                if (Time.time - lastHeavyAttackTime >= heavyAttackCooldown)
+                {
+                    currentHeavyCombo = 0;  // Скидаємо лічильник після кулдауну
+                }
+                else
+                {
+                    Debug.Log("Heavy attack is on cooldown.");
+                }
+            }
+        }
+    }
+
+    // Метод для виконання легкої атаки
+    void LightAttack()
+    {
+        Debug.Log("Light attack performed! Damage: " + lightAttackDamage);
+        CreateHitbox(lightAttackDamage, lightAttackRadius);
+    }
+
+    // Метод для виконання важкої атаки
+    void HeavyAttack()
+    {
+        Debug.Log("Heavy attack performed! Damage: " + heavyAttackDamage);
+        CreateHitbox(heavyAttackDamage, heavyAttackRadius);
+    }
+
+    // Метод для створення хітбокса
+    void CreateHitbox(float damage, float radius)
+    {
+        GameObject hitboxObject = new GameObject("Hitbox");
+        SphereCollider hitboxCollider = hitboxObject.AddComponent<SphereCollider>();
+        hitboxCollider.radius = radius;
+        hitboxCollider.isTrigger = true;
+
+        Hitbox hitbox = hitboxObject.AddComponent<Hitbox>();
+        hitbox.damage = damage;
+
+        // Встановлюємо позицію хітбокса (можливо, позиція гравця)
+        hitboxObject.transform.position = transform.position + transform.forward; // За необхідності змініть позицію
+
+        // Знищити хітбокс через кілька секунд
+        Destroy(hitboxObject, 0.5f); // Хітбокс існує 0.5 секунди
+    }
+}
