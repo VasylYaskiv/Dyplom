@@ -1,25 +1,22 @@
 using UnityEngine;
 
-public class Player_Attack : MonoBehaviour
+public class PlayerAttack : MonoBehaviour
 {
     // Змінні для шкоди та кулдауну атак
     public float lightAttackDamage = 5f;
     public float heavyAttackDamage = 10f;
-
+    
     public float lightAttackCooldown = 2f;  // Час кулдауну після 4 легких атак
     public float heavyAttackCooldown = 2f;  // Час кулдауну після 3 важких атак
-
+    
     public int maxLightCombo = 4;   // Кількість легких атак підряд
     public int maxHeavyCombo = 3;   // Кількість важких атак підряд
 
     private float lastLightAttackTime;   // Час останньої легкої атаки
     private float lastHeavyAttackTime;   // Час останньої важкої атаки
-
+    
     private int currentLightCombo = 0;   // Лічильник виконаних легких атак
     private int currentHeavyCombo = 0;   // Лічильник виконаних важких атак
-
-    public float lightAttackRadius = 1f; // Радіус легкої атаки
-    public float heavyAttackRadius = 2f; // Радіус важкої атаки
 
     void Update()
     {
@@ -74,31 +71,14 @@ public class Player_Attack : MonoBehaviour
     void LightAttack()
     {
         Debug.Log("Light attack performed! Damage: " + lightAttackDamage);
-        CreateHitbox(lightAttackDamage, lightAttackRadius);
+        // Тут можна додати анімацію або інші дії, пов'язані з атакою
     }
 
     // Метод для виконання важкої атаки
     void HeavyAttack()
     {
         Debug.Log("Heavy attack performed! Damage: " + heavyAttackDamage);
-        CreateHitbox(heavyAttackDamage, heavyAttackRadius);
-    }
-
-    // Метод для створення хітбокса
-    void CreateHitbox(float damage, float radius)
-    {
-        GameObject hitboxObject = new GameObject("Hitbox");
-        SphereCollider hitboxCollider = hitboxObject.AddComponent<SphereCollider>();
-        hitboxCollider.radius = radius;
-        hitboxCollider.isTrigger = true;
-
-        Hitbox hitbox = hitboxObject.AddComponent<Hitbox>();
-        hitbox.damage = damage;
-
-        // Встановлюємо позицію хітбокса (можливо, позиція гравця)
-        hitboxObject.transform.position = transform.position + transform.forward; // За необхідності змініть позицію
-
-        // Знищити хітбокс через кілька секунд
-        Destroy(hitboxObject, 0.5f); // Хітбокс існує 0.5 секунди
+        // Тут можна додати анімацію або інші дії, пов'язані з атакою
     }
 }
+
