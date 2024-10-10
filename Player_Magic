@@ -1,0 +1,51 @@
+using UnityEngine;
+
+public class PlayerMagic : MonoBehaviour
+{
+    public GameObject fireballPrefab;  // Префаб фаєрболу
+    public float fireballSpeed = 10f;  // Швидкість фаєрболу
+    public float fireballSpawnDistance = 1f;  // Відстань появи фаєрболу від гравця
+    public float magicCooldown = 1f;   // Кулдаун для магії
+
+    private float lastMagicTime;
+    private Vector2 lastMoveDirection = Vector2.up;  // Напрямок останнього руху (за замовчуванням вгору)
+
+    void Update()
+    {
+        // Оновлюємо напрямок руху гравця
+        Vector2 moveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")).normalized;
+
+        // Якщо гравець рухається, оновлюємо останній напрямок руху
+        if (moveDirection != Vector2.zero)
+        {
+            lastMoveDirection = moveDirection;
+        }
+
+        // Якщо натиснута кнопка "F" і кулдаун пройшов, запускаємо фаєрбол
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (Time.time - lastMagicTime >= magicCooldown)
+            {
+                CastFireball();
+                lastMagicTime = Time.time;
+            }
+        }
+    }
+
+    void CastFireball()
+    {
+        // Позиція для створення фаєрболу (на відстані fireballSpawnDistance від гравця в напрямку останнього руху)
+        Vector2 spawnPosition = (Vector2)transform.position + lastMoveDirection * fireballSpawnDistance;
+
+        // Створюємо фаєрбол
+        GameObject fireball = Instantiate(fireballPrefab, spawnPosition, Quaternion.identity);
+        Rigidbody2D rb = fireball.GetComponent<Rigidbody2D>();
+
+        if (rb != null)
+        {
+            // Запускаємо фаєрбол у напрямку останнього руху гравця
+            rb.velocity = lastMoveDirection * fireballSpeed;
+            Debug.Log("Fireball cast with speed: " + fireballSpeed);
+        }
+    }
+}
