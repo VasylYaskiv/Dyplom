@@ -1,0 +1,27 @@
+using UnityEngine;
+
+public class Fireball : MonoBehaviour
+{
+    public float damage = 10f;  // Шкода від фаєрболу
+
+    private void Start()
+    {
+        // Знищуємо фаєрбол через 5 секунд, якщо він не зіткнеться з об'єктом
+        Destroy(gameObject, 5f);
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Перевіряємо, чи має об'єкт, з яким фаєрбол зіткнувся, компонент Health
+        Health targetHealth = collision.gameObject.GetComponent<Health>();
+        if (targetHealth != null)
+        {
+            // Наносимо шкоду об'єкту
+            targetHealth.TakeDamage(damage);
+            Debug.Log("Fireball hit! Damage dealt: " + damage);
+        }
+
+        // Знищуємо фаєрбол після зіткнення
+        Destroy(gameObject);
+    }
+}
